@@ -41,16 +41,28 @@ def draw_maze(maze):
                 color = 'black' if maze[y][x] == 1 else 'white'
             canvas.create_rectangle(x*10, y*10, x*10+10, y*10+10, fill=color, outline=color)
 
+exploring = False  # Add this global variable
+
 def regenerate_maze():
-    global maze
+    global maze, exploring
+    if exploring:
+        exploring = False  # Stop the exploration if in progress
     maze = generate_maze(51, 51)
     draw_maze(maze)
 
 def play():
+    global exploring
+    if exploring:
+        return  # Do nothing if already exploring
+    exploring = True
     path = []
     find_path(maze, 1, 1, path)
+    exploring = False  # Reset exploring flag when done
 
 def find_path(maze, x, y, path):
+    global exploring
+    if not exploring:
+        return False  # Stop if exploration is flagged to stop
     if (x, y) == (len(maze[0])-2, len(maze)-2):
         path.append((x, y))
         return True
@@ -80,9 +92,6 @@ regenerate_button.pack(side=tk.LEFT)
 
 play_button = tk.Button(menu_frame, text="Play", command=play)
 play_button.pack(side=tk.LEFT)
-
-fastest_path_button = tk.Button(menu_frame, text="Fastest Path")
-fastest_path_button.pack(side=tk.LEFT)
 
 canvas = tk.Canvas(root, width=500, height=500, bg='white')
 canvas.pack()

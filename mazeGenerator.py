@@ -71,7 +71,8 @@ def regenerate_maze():
     global maze, exploring
     if exploring:
         exploring = False  # Stop the exploration if in progress
-    maze = generate_maze(51, 51)
+    size = difficulty_slider.get() * 2 + 1  # Adjust size based on difficulty
+    maze = generate_maze(size, size)
     draw_maze(maze)
 
 def play():
@@ -161,6 +162,21 @@ regenerate_button.pack(side=tk.LEFT, padx=5)
 
 play_button = tk.Button(menu_frame, text="Play", command=play, **button_style)
 play_button.pack(side=tk.LEFT, padx=5)
+
+# Create difficulty slider
+difficulty_slider = tk.Scale(
+    menu_frame,
+    from_=5,
+    to=25,
+    orient=tk.HORIZONTAL,
+    label="Difficulty",
+    bg=COLORS['background'],
+    fg='white',
+    troughcolor=COLORS['button_bg'],
+    highlightthickness=0
+)
+difficulty_slider.set(10)  # Set default difficulty
+difficulty_slider.pack(side=tk.LEFT, padx=5)
 
 # Create a frame for the canvas with padding
 canvas_frame = tk.Frame(

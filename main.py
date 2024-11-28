@@ -1,5 +1,7 @@
+import sys
+import random
 import tkinter as tk
-from mazeGenerator import *
+import time
 
 # Define color scheme
 COLORS = {
@@ -12,6 +14,144 @@ COLORS = {
     "button_bg": "#3498DB",
     "button_fg": "white",
 }
+
+exploring = False  # Add this global variable
+max_depth = 0  # Add this global variable to track maximum recursion depth
+
+def max_depth_limit():
+    sys.setrecursionlimit(10**6)
+
+def generate_maze(width, height):
+    maze = [[1 for _ in range(width)] for _ in range(height)]
+    stack = [(1, 1)]
+    maze[1][1] = 0
+
+    while stack:
+        x, y = stack[-1]
+        neighbors = []
+
+        if x > 2 and maze[y][x - 2] == 1:
+            neighbors.append((x - 2, y))
+        if x < width - 3 and maze[y][x + 2] == 1:
+            neighbors.append((x + 2, y))
+        if y > 2 and maze[y - 2][x] == 1:
+            neighbors.append((x, y - 2))
+        if y < height - 3 and maze[y + 2][x] == 1:
+            neighbors.append((x, y + 2))
+
+        if neighbors:
+            nx, ny = random.choice(neighbors)
+            maze[ny][nx] = 0
+            maze[(ny + y) // 2][(nx + x) // 2] = 0
+            stack.append((nx, ny))
+        else:
+            stack.pop()
+
+    return maze
+
+def draw_maze(maze):
+    canvas.delete("all")
+    size = difficulty_slider.get() * 2 + 1
+    cell_size = max(1, 500 // size)  # Adjust cell size based on maze size
+    for y in range(len(maze)):
+        for x in range(len(maze[y])):
+            if (x, y) == (1, 1):
+                color = COLORS["start"]
+            elif (x, y) == (len(maze[0]) - 2, len(maze) - 2):
+                color = COLORS["end"]
+            else:
+                color = COLORS["wall"] if maze[y][x] == 1 else COLORS["path"]
+
+            # Draw all cells, not just walls
+            canvas.create_rectangle(
+                x * cell_size,
+                y * cell_size,
+                x * cell_size + cell_size,
+                y * cell_size + cell_size,
+                fill=color,
+                outline=color,
+                width=0,
+            )
+
+def adjust_window_size(size):
+    cell_size = max(1, 500 // size)  # Adjust cell size based on maze size
+    canvas.config(width=size * cell_size, height=size * cell_size)
+    root.geometry(
+        f"{size * cell_size + 40}x{size * cell_size + 200}"  # Increase height to ensure time label is visible
+    )
+
+def regenerate_maze():
+    global maze, exploring
+    if exploring:
+        exploring = False  # Stop the exploration if in progress
+    size = difficulty_slider.get() * 2 + 1  # Adjust size based on difficulty
+    maze = generate_maze(size, size)
+    draw_maze(maze)
+    adjust_window_size(size)
+
+def play():
+    global exploring
+    if exploring:
+        return  # Do nothing if already exploring
+    exploring = True
+    path = []
+    start_time = time.time()  # Record start time
+    find_path(maze, 1, 1, path)
+    exploring = False  # Reset exploring flag when done
+    end_time = time.time()  # Record end time
+    time_label.config(text=f"Time: {end_time - start_time:.2f} seconds")  # Update time label
+
+def find_path(maze, x, y, path, depth=0):
+    global exploring, max_depth
+    if not exploring:
+        return False
+    if depth > max_depth:
+        max_depth = depth
+    if (x, y) == (len(maze[0]) - 2, len(maze) - 2):
+        path.append((x, y))
+        return True
+    if maze[y][x] == 1 or (x, y) in path:
+        return False
+
+    path.append((x, y))
+    size = difficulty_slider.get() * 2 + 1
+    cell_size = max(1, 500 // size)  # Adjust cell size based on maze size
+    # Draw the exploration cell
+    canvas.create_rectangle(
+        x * cell_size,
+        y * cell_size,
+        x * cell_size + cell_size,
+        y * cell_size + cell_size,
+        fill=COLORS["explored"],
+        outline=COLORS["explored"],
+        width=0,
+    )
+    canvas.update()
+    canvas.after(1000 // speed_slider.get())  # Adjust speed based on slider value
+
+    # Check boundaries before recursive calls
+    if (
+        (x + 1 < len(maze[0]) and find_path(maze, x + 1, y, path, depth + 1))
+        or (x - 1 >= 0 and find_path(maze, x - 1, y, path, depth + 1))
+        or (y + 1 < len(maze) and find_path(maze, x, y + 1, path, depth + 1))
+        or (y - 1 >= 0 and find_path(maze, x, y - 1, path, depth + 1))
+    ):
+        return True
+
+    path.pop()
+    # When backtracking, return to path color
+    canvas.create_rectangle(
+        x * cell_size,
+        y * cell_size,
+        x * cell_size + cell_size,
+        y * cell_size + cell_size,
+        fill=COLORS["path"],
+        outline=COLORS["path"],
+        width=0,
+    )
+    canvas.update()
+    canvas.after(1000 // speed_slider.get())  # Adjust speed based on slider value
+    return False
 
 root = tk.Tk()
 root.title("Maze Explorer")
@@ -62,14 +202,14 @@ difficulty_slider = tk.Scale(
     troughcolor=COLORS["button_bg"],
     highlightthickness=0,
 )
-difficulty_slider.set(40)  # Set default difficulty
+difficulty_slider.set(25)  # Set default difficulty
 difficulty_slider.pack(side=tk.LEFT, padx=5)
 
 # Create speed slider
 speed_slider = tk.Scale(
     menu_frame,
     from_=1,
-    to=150,  # Speed range from 1 to 100
+    to=100,  # Speed range from 1 to 100
     orient=tk.HORIZONTAL,
     label="Speed",
     bg=COLORS["background"],
@@ -77,7 +217,7 @@ speed_slider = tk.Scale(
     troughcolor=COLORS["button_bg"],
     highlightthickness=0,
 )
-speed_slider.set(100)  # Set default speed
+speed_slider.set(50)  # Set default speed
 speed_slider.pack(side=tk.LEFT, padx=5)
 
 # Create a frame for the canvas with padding
@@ -88,6 +228,17 @@ canvas = tk.Canvas(
     canvas_frame, width=500, height=500, bg=COLORS["path"], highlightthickness=0
 )
 canvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+
+# Create time label
+time_label = tk.Label(
+    root,
+    text="Time: 0.00 seconds",
+    font=("Helvetica", 12),
+    bg=COLORS["background"],
+    fg="white",
+    pady=10,
+)
+time_label.pack()
 
 # Add hover effects for buttons
 def on_enter(e):

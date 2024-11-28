@@ -4,7 +4,8 @@ import random
 
 
 def max_depth_limit():
-    sys.setrecursionlimit(10 ** 6)
+    sys.setrecursionlimit(10**6)
+
 
 def generate_maze(width, height):
     maze = [[1 for _ in range(width)] for _ in range(height)]
@@ -111,8 +112,8 @@ def find_path(maze, x, y, path, depth=0):
         return False
     if depth > max_depth:
         max_depth = depth
-        max_depth_label.config(text=f"Max Depth: {max_depth}")  # Update max depth label
-    current_depth_label.config(text=f"Current Depth: {depth}")  # Update current depth label
+        # max_depth_label.config(text=f"Max Depth: {max_depth}")  # Remove max depth label update
+    # current_depth_label.config(text=f"Current Depth: {depth}")  # Remove current depth label update
     if (x, y) == (len(maze[0]) - 2, len(maze) - 2):
         path.append((x, y))
         return True
@@ -201,7 +202,7 @@ play_button.pack(side=tk.LEFT, padx=5)
 difficulty_slider = tk.Scale(
     menu_frame,
     from_=5,
-    to=50,  # Increase max difficulty to 50
+    to=100,  # Difficulty range from 5 to 100
     orient=tk.HORIZONTAL,
     label="Difficulty",
     bg=COLORS["background"],
@@ -226,30 +227,6 @@ speed_slider = tk.Scale(
 )
 speed_slider.set(50)  # Set default speed
 speed_slider.pack(side=tk.LEFT, padx=5)
-
-# Create a frame for depth labels
-depth_frame = tk.Frame(menu_frame, bg=COLORS["background"])
-depth_frame.pack(side=tk.LEFT, padx=10, pady=10)
-
-# Create max depth label
-max_depth_label = tk.Label(
-    depth_frame,
-    text="Max Depth: 0",
-    font=("Helvetica", 10),
-    bg=COLORS["background"],
-    fg="white",
-)
-max_depth_label.pack(anchor="w")
-
-# Create current depth label
-current_depth_label = tk.Label(
-    depth_frame,
-    text="Current Depth: 0",
-    font=("Helvetica", 10),
-    bg=COLORS["background"],
-    fg="white",
-)
-current_depth_label.pack(anchor="w")
 
 # Create a frame for the canvas with padding
 canvas_frame = tk.Frame(root, bg=COLORS["background"], padx=20, pady=20)

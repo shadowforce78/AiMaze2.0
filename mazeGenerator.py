@@ -1,6 +1,6 @@
-import tkinter as tk
 import sys
 import random
+import tkinter as tk
 
 
 def max_depth_limit():

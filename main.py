@@ -1,8 +1,9 @@
 import sys
 import random
 import tkinter as tk
-from tkinter import messagebox  # Add this import
+from tkinter import messagebox
 import time
+from exploring import find_path  # Import the find_path function
 
 # Define color scheme
 COLORS = {
@@ -102,62 +103,10 @@ def play():
     exploring = True
     path = []
     start_time = time.time()  # Record start time
-    find_path(maze, 1, 1, path)
+    find_path(maze, 1, 1, path, algorithm_var.get(), canvas, difficulty_slider, speed_slider, exploring, max_depth)  # Pass the necessary parameters
     exploring = False  # Reset exploring flag when done
     end_time = time.time()  # Record end time
     time_label.config(text=f"Time: {end_time - start_time:.2f} seconds")  # Update time label
-
-def find_path(maze, x, y, path, depth=0):
-    global exploring, max_depth
-    if not exploring:
-        return False
-    if depth > max_depth:
-        max_depth = depth
-    if (x, y) == (len(maze[0]) - 2, len(maze) - 2):
-        path.append((x, y))
-        return True
-    if maze[y][x] == 1 or (x, y) in path:
-        return False
-
-    path.append((x, y))
-    size = difficulty_slider.get() * 2 + 1
-    cell_size = max(1, 500 // size)  # Adjust cell size based on maze size
-    # Draw the exploration cell
-    canvas.create_rectangle(
-        x * cell_size,
-        y * cell_size,
-        x * cell_size + cell_size,
-        y * cell_size + cell_size,
-        fill=COLORS["explored"],
-        outline=COLORS["explored"],
-        width=0,
-    )
-    canvas.update()
-    canvas.after(1000 // speed_slider.get())  # Adjust speed based on slider value
-
-    # Check boundaries before recursive calls
-    if (
-        (x + 1 < len(maze[0]) and find_path(maze, x + 1, y, path, depth + 1))
-        or (x - 1 >= 0 and find_path(maze, x - 1, y, path, depth + 1))
-        or (y + 1 < len(maze) and find_path(maze, x, y + 1, path, depth + 1))
-        or (y - 1 >= 0 and find_path(maze, x, y - 1, path, depth + 1))
-    ):
-        return True
-
-    path.pop()
-    # When backtracking, return to path color
-    canvas.create_rectangle(
-        x * cell_size,
-        y * cell_size,
-        x * cell_size + cell_size,
-        y * cell_size + cell_size,
-        fill=COLORS["path"],
-        outline=COLORS["path"],
-        width=0,
-    )
-    canvas.update()
-    canvas.after(1000 // speed_slider.get())  # Adjust speed based on slider value
-    return False
 
 root = tk.Tk()
 root.title("Maze Explorer")
@@ -235,16 +184,28 @@ canvas = tk.Canvas(
 )
 canvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
+# Create time label and algorithm dropdown menu frame
+timer_frame = tk.Frame(root, bg=COLORS["background"], pady=10)
+timer_frame.pack()
+
 # Create time label
 time_label = tk.Label(
-    root,
+    timer_frame,
     text="Time: 0.00 seconds",
     font=("Helvetica", 12),
     bg=COLORS["background"],
     fg="white",
     pady=10,
 )
-time_label.pack()
+time_label.pack(side=tk.LEFT)
+
+# Create algorithm dropdown menu
+algorithm_var = tk.StringVar(root)
+algorithm_var.set("DFS")  # Set default algorithm
+
+algorithm_menu = tk.OptionMenu(timer_frame, algorithm_var, "DFS", "BFS")
+algorithm_menu.config(bg=COLORS["button_bg"], fg=COLORS["button_fg"], font=("Helvetica", 10), relief="flat")
+algorithm_menu.pack(side=tk.LEFT, padx=5)
 
 # Add hover effects for buttons
 def on_enter(e):

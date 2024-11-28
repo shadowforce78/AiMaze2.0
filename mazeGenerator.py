@@ -44,7 +44,8 @@ COLORS = {
 
 def draw_maze(maze):
     canvas.delete("all")
-    cell_size = 10
+    size = difficulty_slider.get() * 2 + 1
+    cell_size = max(1, 500 // size)  # Adjust cell size based on maze size
     for y in range(len(maze)):
         for x in range(len(maze[y])):
             if (x, y) == (1, 1):
@@ -74,6 +75,12 @@ def regenerate_maze():
     size = difficulty_slider.get() * 2 + 1  # Adjust size based on difficulty
     maze = generate_maze(size, size)
     draw_maze(maze)
+    adjust_window_size(size)
+
+def adjust_window_size(size):
+    cell_size = max(1, 500 // size)  # Adjust cell size based on maze size
+    canvas.config(width=size * cell_size, height=size * cell_size)
+    root.geometry(f"{size * cell_size + 40}x{size * cell_size + 160}")  # Increase height to ensure bottom-right corner is visible
 
 def play():
     global exploring
@@ -95,7 +102,8 @@ def find_path(maze, x, y, path):
         return False
     
     path.append((x, y))
-    cell_size = 10
+    size = difficulty_slider.get() * 2 + 1
+    cell_size = max(1, 500 // size)  # Adjust cell size based on maze size
     # Draw the exploration cell
     canvas.create_rectangle(
         x*cell_size,
@@ -194,7 +202,7 @@ canvas = tk.Canvas(
     bg=COLORS['path'],
     highlightthickness=0
 )
-canvas.pack()
+canvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
 # Add hover effects for buttons
 def on_enter(e):
@@ -210,5 +218,6 @@ for button in [regenerate_button, play_button]:
 # Initialize the maze
 maze = generate_maze(51, 51)
 draw_maze(maze)
+adjust_window_size(51)
 
 root.mainloop()

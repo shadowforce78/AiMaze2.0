@@ -62,7 +62,7 @@ difficulty_slider = tk.Scale(
     troughcolor=COLORS["button_bg"],
     highlightthickness=0,
 )
-difficulty_slider.set(25)  # Set default difficulty
+difficulty_slider.set(40)  # Set default difficulty
 difficulty_slider.pack(side=tk.LEFT, padx=5)
 
 # Create speed slider

@@ -1,6 +1,7 @@
 import sys
 import random
 import tkinter as tk
+import time  # Add this import
 
 
 def max_depth_limit():
@@ -92,8 +93,8 @@ def adjust_window_size(size):
     cell_size = max(1, 500 // size)  # Adjust cell size based on maze size
     canvas.config(width=size * cell_size, height=size * cell_size)
     root.geometry(
-        f"{size * cell_size + 40}x{size * cell_size + 160}"
-    )  # Increase height to ensure bottom-right corner is visible
+        f"{size * cell_size + 40}x{size * cell_size + 200}"  # Increase height to ensure time label is visible
+    )
 
 
 def play():
@@ -102,8 +103,11 @@ def play():
         return  # Do nothing if already exploring
     exploring = True
     path = []
+    start_time = time.time()  # Record start time
     find_path(maze, 1, 1, path)
     exploring = False  # Reset exploring flag when done
+    end_time = time.time()  # Record end time
+    time_label.config(text=f"Time: {end_time - start_time:.2f} seconds")  # Update time label
 
 
 def find_path(maze, x, y, path, depth=0):
@@ -236,6 +240,17 @@ canvas = tk.Canvas(
     canvas_frame, width=500, height=500, bg=COLORS["path"], highlightthickness=0
 )
 canvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+
+# Create time label
+time_label = tk.Label(
+    root,
+    text="Time: 0.00 seconds",
+    font=("Helvetica", 12),
+    bg=COLORS["background"],
+    fg="white",
+    pady=10,
+)
+time_label.pack()
 
 
 # Add hover effects for buttons

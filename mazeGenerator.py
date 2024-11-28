@@ -167,7 +167,7 @@ play_button.pack(side=tk.LEFT, padx=5)
 difficulty_slider = tk.Scale(
     menu_frame,
     from_=5,
-    to=25,
+    to=50,  # Increase max difficulty to 50
     orient=tk.HORIZONTAL,
     label="Difficulty",
     bg=COLORS['background'],
@@ -175,7 +175,7 @@ difficulty_slider = tk.Scale(
     troughcolor=COLORS['button_bg'],
     highlightthickness=0
 )
-difficulty_slider.set(10)  # Set default difficulty
+difficulty_slider.set(25)  # Set default difficulty
 difficulty_slider.pack(side=tk.LEFT, padx=5)
 
 # Create a frame for the canvas with padding

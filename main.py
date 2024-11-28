@@ -1,6 +1,7 @@
 import sys
 import random
 import tkinter as tk
+from tkinter import messagebox  # Add this import
 import time
 
 # Define color scheme
@@ -17,6 +18,7 @@ COLORS = {
 
 exploring = False  # Add this global variable
 max_depth = 0  # Add this global variable to track maximum recursion depth
+warning_shown = False  # Add this global variable
 
 def max_depth_limit():
     sys.setrecursionlimit(10**6)
@@ -81,16 +83,20 @@ def adjust_window_size(size):
     )
 
 def regenerate_maze():
-    global maze, exploring
+    global maze, exploring, warning_shown
     if exploring:
         exploring = False  # Stop the exploration if in progress
     size = difficulty_slider.get() * 2 + 1  # Adjust size based on difficulty
+    if size > 150 and not warning_shown:
+        messagebox.showwarning("Warning", "High difficulty may impact performance.")
+        warning_shown = True  # Set the flag to True after showing the warning
     maze = generate_maze(size, size)
     draw_maze(maze)
     adjust_window_size(size)
 
 def play():
-    global exploring
+    global exploring, warning_shown
+    warning_shown = False  # Reset the warning flag when starting a new exploration
     if exploring:
         return  # Do nothing if already exploring
     exploring = True
@@ -194,7 +200,7 @@ play_button.pack(side=tk.LEFT, padx=5)
 difficulty_slider = tk.Scale(
     menu_frame,
     from_=5,
-    to=100,  # Difficulty range from 5 to 100
+    to=300,  # Difficulty range from 5 to 300
     orient=tk.HORIZONTAL,
     label="Difficulty",
     bg=COLORS["background"],
@@ -209,7 +215,7 @@ difficulty_slider.pack(side=tk.LEFT, padx=5)
 speed_slider = tk.Scale(
     menu_frame,
     from_=1,
-    to=100,  # Speed range from 1 to 100
+    to=1000,  # Speed range from 1 to 1000
     orient=tk.HORIZONTAL,
     label="Speed",
     bg=COLORS["background"],
@@ -217,7 +223,7 @@ speed_slider = tk.Scale(
     troughcolor=COLORS["button_bg"],
     highlightthickness=0,
 )
-speed_slider.set(50)  # Set default speed
+speed_slider.set(100)  # Set default speed
 speed_slider.pack(side=tk.LEFT, padx=5)
 
 # Create a frame for the canvas with padding

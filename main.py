@@ -203,7 +203,7 @@ time_label.pack(side=tk.LEFT)
 algorithm_var = tk.StringVar(root)
 algorithm_var.set("DFS")  # Set default algorithm
 
-algorithm_menu = tk.OptionMenu(timer_frame, algorithm_var, "DFS", "BFS")
+algorithm_menu = tk.OptionMenu(timer_frame, algorithm_var, "DFS", "A*")
 algorithm_menu.config(bg=COLORS["button_bg"], fg=COLORS["button_fg"], font=("Helvetica", 10), relief="flat")
 algorithm_menu.pack(side=tk.LEFT, padx=5)
 

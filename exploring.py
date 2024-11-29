@@ -11,8 +11,11 @@ def find_path(maze, x, y, path, algorithm, canvas, difficulty_slider, speed_slid
         return dfs(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring, max_depth, depth)
     elif algorithm == "A*":
         return a_star(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring)
+    elif algorithm == "BFS":
+        return bfs(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring)
     return False
 
+# DFS (Depth First Search) algorithm
 def dfs(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring, max_depth, depth=0):
     if not exploring:
         return False
@@ -64,12 +67,13 @@ def dfs(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring, ma
     canvas.after(1000 // speed_slider.get())  # Adjust speed based on slider value
     return False
 
+# A* algorithm (A Star)
 def a_star(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring):
     if not exploring:
         return False
 
     def heuristic(a, b):
-        return abs(a[0] - b[1]) + abs(a[1] - b[1])
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
     start = (x, y)
     goal = (len(maze[0]) - 2, len(maze) - 2)
@@ -78,6 +82,7 @@ def a_star(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring)
     came_from = {}
     g_score = {start: 0}
     f_score = {start: heuristic(start, goal)}
+    explored_cells = set()  # To track all explored cells
 
     size = difficulty_slider.get() * 2 + 1
     cell_size = max(1, 500 // size)
@@ -91,6 +96,8 @@ def a_star(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring)
                 current = came_from[current]
             path.append(start)
             path.reverse()
+
+            # Color the final path
             for (px, py) in path:
                 canvas.create_rectangle(
                     px * cell_size,
@@ -101,8 +108,23 @@ def a_star(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring)
                     outline=COLORS["explored"],
                     width=0
                 )
+
+            # Color incorrect paths in orange
+            for (ex, ey) in explored_cells:
+                if (ex, ey) not in path:
+                    canvas.create_rectangle(
+                        ex * cell_size,
+                        ey * cell_size,
+                        ex * cell_size + cell_size,
+                        ey * cell_size + cell_size,
+                        fill="orange",  # Orange for incorrect paths
+                        outline="orange",
+                        width=0
+                    )
             canvas.update()
             return True
+
+        explored_cells.add(current)  # Mark cell as explored
 
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             neighbor = (current[0] + dx, current[1] + dy)
@@ -127,4 +149,103 @@ def a_star(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring)
                     canvas.update()
                     canvas.after(1000 // speed_slider.get())  # Adjust speed based on slider value
 
+    # If no path is found, still color the explored cells
+    for (ex, ey) in explored_cells:
+        canvas.create_rectangle(
+            ex * cell_size,
+            ey * cell_size,
+            ex * cell_size + cell_size,
+            ey * cell_size + cell_size,
+            fill="orange",  # Orange for explored cells
+            outline="orange",
+            width=0
+        )
+    canvas.update()
+    return False
+
+# BFS (Breadth First Search) algorithm
+def bfs(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring):
+    if not exploring:
+        return False
+
+    start = (x, y)
+    goal = (len(maze[0]) - 2, len(maze) - 2)
+    queue = [start]
+    came_from = {}
+    explored_cells = set()  # To track all explored cells
+
+    size = difficulty_slider.get() * 2 + 1
+    cell_size = max(1, 500 // size)
+
+    while queue:
+        current = queue.pop(0)
+
+        if current == goal:
+            while current != start:
+                path.append(current)
+                current = came_from[current]
+            path.append(start)
+            path.reverse()
+
+            # Color the final path
+            for (px, py) in path:
+                canvas.create_rectangle(
+                    px * cell_size,
+                    py * cell_size,
+                    px * cell_size + cell_size,
+                    py * cell_size + cell_size,
+                    fill=COLORS["explored"],
+                    outline=COLORS["explored"],
+                    width=0
+                )
+
+            # Color incorrect paths in orange
+            for (ex, ey) in explored_cells:
+                if (ex, ey) not in path:
+                    canvas.create_rectangle(
+                        ex * cell_size,
+                        ey * cell_size,
+                        ex * cell_size + cell_size,
+                        ey * cell_size + cell_size,
+                        fill="orange",  # Orange for incorrect paths
+                        outline="orange",
+                        width=0
+                    )
+            canvas.update()
+            return True
+
+        explored_cells.add(current)  # Mark cell as explored
+
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            neighbor = (current[0] + dx, current[1] + dy)
+            if 0 <= neighbor[0] < len(maze[0]) and 0 <= neighbor[1] < len(maze) and maze[neighbor[1]][neighbor[0]] == 0 and neighbor not in came_from:
+                came_from[neighbor] = current
+                queue.append(neighbor)
+
+                # Draw the exploration cell
+                canvas.create_rectangle(
+                    neighbor[0] * cell_size,
+                    neighbor[1] * cell_size,
+                    neighbor[0] * cell_size + cell_size,
+                    neighbor[1] * cell_size + cell_size,
+                    fill=COLORS["explored"],
+                    outline=COLORS["explored"],
+                    width=0
+                )
+                canvas.update()
+                canvas.after(1000 // speed_slider.get())
+                
+    # If no path is found, still color the explored cells
+    for (ex, ey) in explored_cells:
+        canvas.create_rectangle(
+            ex * cell_size,
+            ey * cell_size,
+            ex * cell_size + cell_size,
+            ey * cell_size + cell_size,
+            fill="orange",  # Orange for explored cells
+            outline="orange",
+            width=0
+        )
+        
+    canvas.update()
     return False

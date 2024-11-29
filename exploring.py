@@ -69,7 +69,7 @@ def a_star(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring)
         return False
 
     def heuristic(a, b):
-        return abs(a[0] - b[0]) + abs(a[1] - b[1])
+        return abs(a[0] - b[1]) + abs(a[1] - b[1])
 
     start = (x, y)
     goal = (len(maze[0]) - 2, len(maze) - 2)
@@ -97,8 +97,8 @@ def a_star(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring)
                     py * cell_size,
                     px * cell_size + cell_size,
                     py * cell_size + cell_size,
-                    fill=COLORS["path"],
-                    outline=COLORS["path"],
+                    fill=COLORS["explored"],
+                    outline=COLORS["explored"],
                     width=0
                 )
             canvas.update()

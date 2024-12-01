@@ -140,8 +140,9 @@ def update_execution_times_label():
     times_text = "Execution Times:\n"
     for algo, exec_time in execution_times.items():
         times_text += f"{algo}: {exec_time:.2f} seconds\n"
-    execution_times_label.config(text=times_text)
-    adjust_window_size(difficulty_slider.get() * 2 + 1)  # Adjust window size after updating times
+    if execution_times_label.cget("text") != times_text:
+        execution_times_label.config(text=times_text)
+        adjust_window_size(difficulty_slider.get() * 2 + 1)  # Adjust window size after updating times
 
 
 root = tk.Tk()

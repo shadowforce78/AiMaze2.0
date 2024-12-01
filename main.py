@@ -173,7 +173,9 @@ regenerate_button.pack(side=tk.TOP, pady=5)
 play_button = tk.Button(button_frame, text="Play", command=play, **button_style)
 play_button.pack(side=tk.TOP, pady=5)
 
-clear_button = tk.Button(button_frame, text="Clear", command=clear_canvas, **button_style)
+clear_button = tk.Button(
+    button_frame, text="Clear", command=clear_canvas, **button_style
+)
 clear_button.pack(side=tk.TOP, pady=5)
 
 # Create a frame for sliders
@@ -229,7 +231,16 @@ time_label.pack(side=tk.TOP, pady=5)
 algorithm_var = tk.StringVar(root)
 algorithm_var.set("DFS")  # Set default algorithm
 
-algorithm_menu = tk.OptionMenu(timer_algo_frame, algorithm_var, "DFS", "A*", "BFS")
+algorithm_menu = tk.OptionMenu(
+    timer_algo_frame,
+    algorithm_var,
+    "DFS",
+    "A*",
+    "BFS",
+    "Right-Hand",
+    "Left-Hand",
+    "Flood Fill",
+)
 algorithm_menu.config(
     bg=COLORS["button_bg"],
     fg=COLORS["button_fg"],
@@ -246,6 +257,7 @@ canvas = tk.Canvas(
     canvas_frame, width=500, height=500, bg=COLORS["path"], highlightthickness=0
 )
 canvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+
 
 # Add hover effects for buttons
 def on_enter(e):

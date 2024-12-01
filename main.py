@@ -85,7 +85,7 @@ def adjust_window_size(size):
     cell_size = max(1, 500 // size)  # Adjust cell size based on maze size
     canvas.config(width=size * cell_size, height=size * cell_size)
     root.geometry(
-        f"{size * cell_size + 40}x{size * cell_size + 240}"  # Increase height to ensure time label is visible
+        f"{size * cell_size + 40}x{size * cell_size + 310 + execution_times_label.winfo_height()}"  # Adjust height dynamically
     )
 
 
@@ -141,6 +141,7 @@ def update_execution_times_label():
     for algo, exec_time in execution_times.items():
         times_text += f"{algo}: {exec_time:.2f} seconds\n"
     execution_times_label.config(text=times_text)
+    adjust_window_size(difficulty_slider.get() * 2 + 1)  # Adjust window size after updating times
 
 
 root = tk.Tk()
@@ -157,6 +158,21 @@ title_label = tk.Label(
     pady=10,
 )
 title_label.pack()
+
+# Create a frame for the execution times label
+execution_times_frame = tk.Frame(root, bg=COLORS["background"], pady=10)
+execution_times_frame.pack(side=tk.TOP, fill=tk.X)  # Move to the top
+
+# Create execution times label
+execution_times_label = tk.Label(
+    execution_times_frame,
+    text="Execution Times:",
+    font=("Helvetica", 12),
+    bg=COLORS["background"],
+    fg="white",
+    pady=10,
+)
+execution_times_label.pack(side=tk.TOP, pady=5)
 
 # Style the menu frame
 menu_frame = tk.Frame(root, bg=COLORS["background"], pady=10)
@@ -268,21 +284,6 @@ canvas = tk.Canvas(
     canvas_frame, width=500, height=500, bg=COLORS["path"], highlightthickness=0
 )
 canvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
-
-# Create a frame for the execution times label
-execution_times_frame = tk.Frame(root, bg=COLORS["background"], pady=10)
-execution_times_frame.pack(side=tk.BOTTOM, fill=tk.X)
-
-# Create execution times label
-execution_times_label = tk.Label(
-    execution_times_frame,
-    text="Execution Times:",
-    font=("Helvetica", 12),
-    bg=COLORS["background"],
-    fg="white",
-    pady=10,
-)
-execution_times_label.pack(side=tk.TOP, pady=5)
 
 
 # Add hover effects for buttons

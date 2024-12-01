@@ -20,6 +20,7 @@ COLORS = {
 exploring = False  # Add this global variable
 max_depth = 0  # Add this global variable to track maximum recursion depth
 warning_shown = False  # Add this global variable
+execution_times = {}  # Dictionary to store execution times for each algorithm
 
 
 def max_depth_limit():
@@ -106,7 +107,7 @@ def clear_canvas():
 
 
 def play():
-    global exploring, warning_shown
+    global exploring, warning_shown, execution_times
     warning_shown = False  # Reset the warning flag when starting a new exploration
     if exploring:
         return  # Do nothing if already exploring
@@ -127,9 +128,19 @@ def play():
     )  # Pass the necessary parameters
     exploring = False  # Reset exploring flag when done
     end_time = time.time()  # Record end time
+    elapsed_time = end_time - start_time  # Calculate elapsed time
+    execution_times[algorithm_var.get()] = elapsed_time  # Store the execution time
     time_label.config(
-        text=f"Time: {end_time - start_time:.2f} seconds"
+        text=f"Time: {elapsed_time:.2f} seconds"
     )  # Update time label
+    update_execution_times_label()  # Update the execution times label
+
+
+def update_execution_times_label():
+    times_text = "Execution Times:\n"
+    for algo, exec_time in execution_times.items():
+        times_text += f"{algo}: {exec_time:.2f} seconds\n"
+    execution_times_label.config(text=times_text)
 
 
 root = tk.Tk()
@@ -257,6 +268,21 @@ canvas = tk.Canvas(
     canvas_frame, width=500, height=500, bg=COLORS["path"], highlightthickness=0
 )
 canvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+
+# Create a frame for the execution times label
+execution_times_frame = tk.Frame(root, bg=COLORS["background"], pady=10)
+execution_times_frame.pack(side=tk.BOTTOM, fill=tk.X)
+
+# Create execution times label
+execution_times_label = tk.Label(
+    execution_times_frame,
+    text="Execution Times:",
+    font=("Helvetica", 12),
+    bg=COLORS["background"],
+    fg="white",
+    pady=10,
+)
+execution_times_label.pack(side=tk.TOP, pady=5)
 
 
 # Add hover effects for buttons

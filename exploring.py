@@ -363,8 +363,10 @@ def bfs(maze, x, y, path, canvas, difficulty_slider, speed_slider, exploring):
             ey * cell_size,
             ex * cell_size + cell_size,
             ey * cell_size + cell_size,
-            fill="orange",  # Orange for explored cells
-            outline="orange",
+            # fill="orange",  # Orange for explored cells
+            # outline="orange",
+            fill=COLORS["path"],
+            outline=COLORS["path"],
             width=0,
         )
 

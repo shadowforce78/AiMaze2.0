@@ -190,7 +190,7 @@ difficulty_slider.pack(side=tk.LEFT, padx=5)
 speed_slider = tk.Scale(
     sliders_frame,
     from_=1,
-    to=1000,  # Speed range from 1 to 1000
+    to=500,  # Speed range from 1 to 500
     orient=tk.HORIZONTAL,
     label="Speed",
     bg=COLORS["background"],

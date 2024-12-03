@@ -191,7 +191,7 @@ sliders_frame.pack(side=tk.TOP, padx=5, pady=5)
 difficulty_slider = tk.Scale(
     sliders_frame,
     from_=5,
-    to=300,  # Difficulty range from 5 to 300
+    to=150,  # Difficulty range from 5 to 150
     orient=tk.HORIZONTAL,
     label="Difficulty",
     bg=COLORS["background"],

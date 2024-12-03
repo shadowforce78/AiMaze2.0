@@ -20,8 +20,6 @@ COLORS = {
 exploring = False  # Add this global variable
 max_depth = 0  # Add this global variable to track maximum recursion depth
 warning_shown = False  # Add this global variable
-execution_times = {}  # Dictionary to store execution times for each algorithm
-
 
 def max_depth_limit():
     sys.setrecursionlimit(10**6)
@@ -85,7 +83,7 @@ def adjust_window_size(size):
     cell_size = max(1, 500 // size)  # Adjust cell size based on maze size
     canvas.config(width=size * cell_size, height=size * cell_size)
     root.geometry(
-        f"{size * cell_size + 40}x{size * cell_size + 310 + execution_times_frame.winfo_height()}"  # Adjust height dynamically
+        f"{size * cell_size + 40}x{size * cell_size + 220}"  # Adjust height dynamically
     )
 
 
@@ -132,19 +130,7 @@ def play():
     execution_times[algorithm_var.get()] = elapsed_time  # Store the execution time
     time_label.config(
         text=f"Time: {elapsed_time:.2f} seconds"
-    )  # Update time label
-    update_execution_times_label()  # Update the execution times label
-
-
-def update_execution_times_label():
-    times_text = "Execution Times: "
-    for algo in ["DFS", "A*", "BFS", "Right-Hand", "Left-Hand", "Flood Fill"]:
-        exec_time = execution_times.get(algo, "N/A")
-        times_text += f"{algo}: {exec_time if exec_time == 'N/A' else f'{exec_time:.2f} seconds'}  "
-    if execution_times_label.cget("text") != times_text:
-        execution_times_label.config(text=times_text)
-        adjust_window_size(difficulty_slider.get() * 2 + 1)  # Adjust window size after updating times
-
+    )
 
 root = tk.Tk()
 root.title("Maze Explorer")
@@ -161,22 +147,6 @@ title_label = tk.Label(
 )
 title_label.pack()
 
-# Create a frame for the execution times label
-execution_times_frame = tk.Frame(root, bg=COLORS["background"], pady=10)
-execution_times_frame.pack(side=tk.TOP, fill=tk.X)  # Move to the top
-
-# Create execution times label
-execution_times_label = tk.Label(
-    execution_times_frame,
-    text="Execution Times: ",
-    font=("Helvetica", 12),
-    bg=COLORS["background"],
-    fg="white",
-    pady=10,
-    wraplength=500,  # Ensure the text wraps within the window width
-    justify=tk.LEFT,
-)
-execution_times_label.pack(side=tk.TOP, pady=5)
 
 # Define button style
 button_style = {
@@ -293,8 +263,6 @@ canvas = tk.Canvas(
 )
 canvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
-# Initialize the execution times label with algorithm names
-update_execution_times_label()
 
 # Add hover effects for buttons
 def on_enter(e):

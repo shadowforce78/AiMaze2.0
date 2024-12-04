@@ -1,6 +1,7 @@
 import sys
 import random
-import tkinter as tk
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 from tkinter import messagebox
 import time
 from exploring import find_path  # Import the find_path function
@@ -130,106 +131,98 @@ def play():
     elapsed_time = end_time - start_time  # Calculate elapsed time
     time_label.config(text=f"Time: {elapsed_time:.2f} seconds")
 
-root = tk.Tk()
+root = ttk.Window(themename="darkly")
 root.title("Maze Explorer")
-root.configure(bg=COLORS["background"])
 
 # Create title
-title_label = tk.Label(
+title_label = ttk.Label(
     root,
     text="Maze Explorer",
     font=("Helvetica", 16, "bold"),
-    bg=COLORS["background"],
-    fg="white",
-    pady=10,
+    background=COLORS["background"],
+    foreground="white",
+    padding=10,
 )
 title_label.pack()
 
 # Define button style
 button_style = {
-    "font": ("Helvetica", 10),
+    "bootstyle": PRIMARY,
     "width": 10,
-    "bg": COLORS["button_bg"],
-    "fg": COLORS["button_fg"],
-    "relief": "flat",
-    "pady": 5,
+    "padding": 5,
 }
 
 # Style the menu frame
-menu_frame = tk.Frame(root, bg=COLORS["background"], pady=10)
-menu_frame.pack(side=tk.TOP, fill=tk.X)
+menu_frame = ttk.Frame(root, padding=10)
+menu_frame.pack(side=TOP, fill=X)
 
 # Create a frame for buttons and sliders
-controls_frame = tk.Frame(menu_frame, bg=COLORS["background"])
-controls_frame.pack(side=tk.LEFT, padx=5)
+controls_frame = ttk.Frame(menu_frame)
+controls_frame.pack(side=LEFT, padx=5)
 
 # Create a frame for buttons
-button_frame = tk.Frame(controls_frame, bg=COLORS["background"])
-button_frame.pack(side=tk.TOP, padx=5, pady=5)
+button_frame = ttk.Frame(controls_frame)
+button_frame.pack(side=TOP, padx=5, pady=5)
 
-regenerate_button = tk.Button(button_frame, text="Regenerate", command=regenerate_maze, **button_style)
-regenerate_button.pack(side=tk.LEFT, padx=5)
+regenerate_button = ttk.Button(button_frame, text="Regenerate", command=regenerate_maze, **button_style)
+regenerate_button.pack(side=LEFT, padx=5)
 
-play_button = tk.Button(button_frame, text="Play", command=play, **button_style)
-play_button.pack(side=tk.LEFT, padx=5)
+play_button = ttk.Button(button_frame, text="Play", command=play, **button_style)
+play_button.pack(side=LEFT, padx=5)
 
-clear_button = tk.Button(button_frame, text="Clear", command=clear_canvas, **button_style)
-clear_button.pack(side=tk.LEFT, padx=5)
+clear_button = ttk.Button(button_frame, text="Clear", command=clear_canvas, **button_style)
+clear_button.pack(side=LEFT, padx=5)
 
 # Create a frame for sliders
-sliders_frame = tk.Frame(controls_frame, bg=COLORS["background"])
-sliders_frame.pack(side=tk.TOP, padx=5, pady=5)
+sliders_frame = ttk.Frame(controls_frame)
+sliders_frame.pack(side=TOP, padx=5, pady=5)
 
 # Create difficulty slider
-difficulty_slider = tk.Scale(
+difficulty_label = ttk.Label(sliders_frame, text="Difficulty", bootstyle=PRIMARY)
+difficulty_label.pack(side=LEFT, padx=5)
+difficulty_slider = ttk.Scale(
     sliders_frame,
     from_=5,
     to=150,  # Difficulty range from 5 to 150
-    orient=tk.HORIZONTAL,
-    label="Difficulty",
-    bg=COLORS["background"],
-    fg="white",
-    troughcolor=COLORS["button_bg"],
-    highlightthickness=0,
+    orient=HORIZONTAL,
+    bootstyle=PRIMARY,
 )
 difficulty_slider.set(25)  # Set default difficulty
-difficulty_slider.pack(side=tk.LEFT, padx=5)
+difficulty_slider.pack(side=LEFT, padx=5)
 
 # Create speed slider
-speed_slider = tk.Scale(
+speed_label = ttk.Label(sliders_frame, text="Speed", bootstyle=PRIMARY)
+speed_label.pack(side=LEFT, padx=5)
+speed_slider = ttk.Scale(
     sliders_frame,
     from_=1,
     to=500,  # Speed range from 1 to 500
-    orient=tk.HORIZONTAL,
-    label="Speed",
-    bg=COLORS["background"],
-    fg="white",
-    troughcolor=COLORS["button_bg"],
-    highlightthickness=0,
+    orient=HORIZONTAL,
+    bootstyle=PRIMARY,
 )
 speed_slider.set(100)  # Set default speed
-speed_slider.pack(side=tk.LEFT, padx=5)
+speed_slider.pack(side=LEFT, padx=5)
 
 # Create a frame for the timer and algorithm dropdown
-timer_algo_frame = tk.Frame(menu_frame, bg=COLORS["background"], pady=10)
-timer_algo_frame.pack(side=tk.LEFT, padx=5)
+timer_algo_frame = ttk.Frame(menu_frame, padding=10)
+timer_algo_frame.pack(side=LEFT, padx=5)
 
 # Create time label
-time_label = tk.Label(
+time_label = ttk.Label(
     timer_algo_frame,
     text="Time: 0.00 seconds",
     font=("Helvetica", 12),
-    bg=COLORS["background"],
-    fg="white",
-    pady=10,
+    background=COLORS["background"],
+    foreground="white",
+    padding=10,
 )
-time_label.pack(side=tk.TOP, pady=5)
+time_label.pack(side=TOP, pady=5)
 
 # Create algorithm dropdown menu
-algorithm_var = tk.StringVar(root)
+algorithm_var = ttk.StringVar(root)
 algorithm_var.set("DFS")  # Set default algorithm
 
-algorithm_menu = tk.OptionMenu(
+algorithm_menu = ttk.OptionMenu(
     timer_algo_frame,
     algorithm_var,
     "DFS",
@@ -239,29 +232,23 @@ algorithm_menu = tk.OptionMenu(
     "Left-Hand",
     "Flood Fill",
 )
-algorithm_menu.config(
-    bg=COLORS["button_bg"],
-    fg=COLORS["button_fg"],
-    font=("Helvetica", 10),
-    relief="flat",
-)
-algorithm_menu.pack(side=tk.TOP, pady=5)
+algorithm_menu.pack(side=TOP, pady=5)
 
 # Create a frame for the canvas with padding
-canvas_frame = tk.Frame(root, bg=COLORS["background"], padx=20, pady=20)
-canvas_frame.pack(expand=True, fill=tk.BOTH)
+canvas_frame = ttk.Frame(root, padding=20)
+canvas_frame.pack(expand=True, fill=BOTH)
 
-canvas = tk.Canvas(
-    canvas_frame, width=500, height=500, bg=COLORS["path"], highlightthickness=0
+canvas = ttk.Canvas(
+    canvas_frame, width=500, height=500, background=COLORS["path"], highlightthickness=0
 )
-canvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+canvas.pack(side=LEFT, expand=True, fill=BOTH)
 
 # Add hover effects for buttons
 def on_enter(e):
-    e.widget["background"] = "#2980B9"
+    e.widget["bootstyle"] = "info"
 
 def on_leave(e):
-    e.widget["background"] = COLORS["button_bg"]
+    e.widget["bootstyle"] = PRIMARY
 
 for button in [regenerate_button, play_button, clear_button]:
     button.bind("<Enter>", on_enter)

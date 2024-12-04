@@ -52,6 +52,14 @@ def generate_maze(width, height):
 
     return maze
 
+def remove_random_wall(maze):
+    width = len(maze[0])
+    height = len(maze)
+    walls = [(x, y) for y in range(1, height - 1) for x in range(1, width - 1) if maze[y][x] == 1]
+    if walls:
+        x, y = random.choice(walls)
+        maze[y][x] = 0
+
 def draw_maze(maze):
     canvas.delete("all")
     size = difficulty_slider.get() * 2 + 1
@@ -90,6 +98,7 @@ def regenerate_maze():
         messagebox.showwarning("Warning", "High difficulty may impact performance.")
         warning_shown = True  # Set the flag to True after showing the warning
     maze = generate_maze(size, size)
+    remove_random_wall(maze)  # Remove a random wall
     draw_maze(maze)
     adjust_window_size(size)
 

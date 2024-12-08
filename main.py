@@ -131,7 +131,7 @@ def play():
     elapsed_time = end_time - start_time  # Calculate elapsed time
     time_label.config(text=f"Time: {elapsed_time:.2f} seconds")
 
-root = ttk.Window(themename="darkly")
+root = ttk.Window(themename="superhero")
 root.title("Maze Explorer")
 
 # Create title

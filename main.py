@@ -22,8 +22,10 @@ exploring = False  # Add this global variable
 max_depth = 0  # Add this global variable to track maximum recursion depth
 warning_shown = False  # Add this global variable
 
+
 def max_depth_limit():
     sys.setrecursionlimit(10**6)
+
 
 def generate_maze(width, height):
     maze = [[1 for _ in range(width)] for _ in range(height)]
@@ -53,13 +55,20 @@ def generate_maze(width, height):
 
     return maze
 
+
 def remove_random_wall(maze):
     width = len(maze[0])
     height = len(maze)
-    walls = [(x, y) for y in range(1, height - 1) for x in range(1, width - 1) if maze[y][x] == 1]
+    walls = [
+        (x, y)
+        for y in range(1, height - 1)
+        for x in range(1, width - 1)
+        if maze[y][x] == 1
+    ]
     if walls:
         x, y = random.choice(walls)
         maze[y][x] = 0
+
 
 def draw_maze(maze):
     canvas.delete("all")
@@ -85,10 +94,14 @@ def draw_maze(maze):
                 width=0,
             )
 
+
 def adjust_window_size(size):
     cell_size = max(1, 500 // size)  # Adjust cell size based on maze size
     canvas.config(width=size * cell_size, height=size * cell_size)
-    root.geometry(f"{size * cell_size + 40}x{size * cell_size + 220}")  # Adjust height dynamically
+    root.geometry(
+        f"{size * cell_size + 40}x{size * cell_size + 220}"
+    )  # Adjust height dynamically
+
 
 def regenerate_maze():
     global maze, exploring, warning_shown
@@ -103,8 +116,10 @@ def regenerate_maze():
     draw_maze(maze)
     adjust_window_size(size)
 
+
 def clear_canvas():
     draw_maze(maze)  # Redraw the maze in its initial state
+
 
 def play():
     global exploring, warning_shown, execution_times
@@ -130,6 +145,7 @@ def play():
     end_time = time.time()  # Record end time
     elapsed_time = end_time - start_time  # Calculate elapsed time
     time_label.config(text=f"Time: {elapsed_time:.2f} seconds")
+
 
 root = ttk.Window(themename="superhero")
 root.title("Maze Explorer")
@@ -164,13 +180,17 @@ controls_frame.pack(side=LEFT, padx=5)
 button_frame = ttk.Frame(controls_frame)
 button_frame.pack(side=TOP, padx=5, pady=5)
 
-regenerate_button = ttk.Button(button_frame, text="Regenerate", command=regenerate_maze, **button_style)
+regenerate_button = ttk.Button(
+    button_frame, text="Regenerate", command=regenerate_maze, **button_style
+)
 regenerate_button.pack(side=LEFT, padx=5)
 
 play_button = ttk.Button(button_frame, text="Play", command=play, **button_style)
 play_button.pack(side=LEFT, padx=5)
 
-clear_button = ttk.Button(button_frame, text="Clear", command=clear_canvas, **button_style)
+clear_button = ttk.Button(
+    button_frame, text="Clear", command=clear_canvas, **button_style
+)
 clear_button.pack(side=LEFT, padx=5)
 
 # Create a frame for sliders
@@ -243,16 +263,9 @@ canvas = ttk.Canvas(
 )
 canvas.pack(side=LEFT, expand=True, fill=BOTH)
 
-# Add hover effects for buttons
-def on_enter(e):
-    e.widget["bootstyle"] = "info"
-
-def on_leave(e):
-    e.widget["bootstyle"] = PRIMARY
-
 for button in [regenerate_button, play_button, clear_button]:
-    button.bind("<Enter>", on_enter)
-    button.bind("<Leave>", on_leave)
+    button.bind("<Enter>")
+    button.bind("<Leave>")
 
 # Initialize the maze
 max_depth_limit()
